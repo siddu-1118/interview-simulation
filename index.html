@@ -1,237 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>VR Technical Interview Simulator</title>
+  <meta charset="utf-8">
+  <title>ULTIMATE VR VFX EXPERIENCE</title>
 
   <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+
+  <!-- Particle System -->
+  <script src="https://cdn.jsdelivr.net/npm/aframe-particle-system-component@1.1.4/dist/aframe-particle-system-component.min.js"></script>
 
   <style>
     body { margin: 0; }
   </style>
 
   <script>
-    /***********************
-     * QUESTION DATABASE
-     ***********************/
-    const QUESTIONS = [
-      {
-        question: "What is HTML?",
-        keywords: ["markup", "structure", "web"],
-        score: 1
-      },
-      {
-        question: "What is CSS used for?",
-        keywords: ["style", "design", "layout"],
-        score: 1
-      },
-      {
-        question: "Explain JavaScript in simple terms.",
-        keywords: ["programming", "logic", "interactive"],
-        score: 2
-      },
-      {
-        question: "What is an API?",
-        keywords: ["communication", "data", "server"],
-        score: 2
-      },
-      {
-        question: "Difference between let and var?",
-        keywords: ["scope", "block", "function"],
-        score: 2
-      }
-    ];
-
-    /***********************
-     * VOICE INPUT
-     ***********************/
-    window.SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-
-    recognition.onerror = (e) => {
-      alert("Voice recognition error. Please try again.");
-      console.error(e);
-    };
-
-    /***********************
-     * INTERVIEW MANAGER
-     ***********************/
-    AFRAME.registerComponent("interview-manager", {
+    /* 🤖 INTERACTIVE CLICK VFX */
+    AFRAME.registerComponent("click-explosion", {
       init: function () {
-        this.index = 0;
-        this.score = 0;
+        this.el.addEventListener("click", () => {
+          const explosion = document.createElement("a-entity");
+          explosion.setAttribute("particle-system", {
+            preset: "default",
+            particleCount: 3000,
+            size: 0.4,
+            color: "#ff0044, #ffff00",
+            velocityValue: "3 6 3"
+          });
+          explosion.setAttribute("position", this.el.getAttribute("position"));
+          this.el.sceneEl.appendChild(explosion);
 
-        this.questionText = document.querySelector("#questionText");
-        this.answerText = document.querySelector("#answerText");
-        this.feedbackText = document.querySelector("#feedbackText");
-        this.progressText = document.querySelector("#progressText");
-
-        this.loadQuestion();
-      },
-
-      loadQuestion: function () {
-        if (this.index >= QUESTIONS.length) {
-          this.endInterview();
-          return;
-        }
-
-        this.questionText.setAttribute(
-          "value",
-          "Technical Question:\n" + QUESTIONS[this.index].question
-        );
-        this.answerText.setAttribute("value", "Click the mic and speak");
-        this.feedbackText.setAttribute("value", "");
-        this.progressText.setAttribute(
-          "value",
-          "Question " + (this.index + 1) + " / " + QUESTIONS.length
-        );
-      },
-
-      submitAnswer: function (speech) {
-        this.answerText.setAttribute("value", "You said:\n" + speech);
-
-        let keywords = QUESTIONS[this.index].keywords;
-        let matches = 0;
-
-        keywords.forEach(k => {
-          if (speech.includes(k)) matches++;
+          setTimeout(() => explosion.remove(), 1500);
         });
-
-        if (matches > 0) {
-          this.score += QUESTIONS[this.index].score;
-          this.feedbackText.setAttribute("value", "Good answer ✔");
-        } else {
-          this.feedbackText.setAttribute(
-            "value",
-            "Needs improvement ❌ Try explaining more clearly."
-          );
-        }
-
-        this.index++;
-        setTimeout(() => this.loadQuestion(), 3000);
-      },
-
-      endInterview: function () {
-        this.questionText.setAttribute(
-          "value",
-          "Interview Complete!\nFinal Score: " + this.score
-        );
-        this.answerText.setAttribute("value", "");
-        this.feedbackText.setAttribute(
-          "value",
-          "Thank you for attending the technical interview."
-        );
-        this.progressText.setAttribute("value", "");
       }
     });
-
-    /***********************
-     * START VOICE INPUT
-     ***********************/
-    function startInterviewVoice() {
-      recognition.start();
-      recognition.onresult = (event) => {
-        const transcript =
-          event.results[0][0].transcript.toLowerCase();
-
-        const manager =
-          document.querySelector("[interview-manager]")
-            .components["interview-manager"];
-
-        manager.submitAnswer(transcript);
-      };
-    }
   </script>
 </head>
 
 <body>
-  <a-scene interview-manager>
+<a-scene fog="type: exponential; color: #000014; density: 0.02">
 
-    <!-- Environment -->
-    <a-sky color="#2d3436"></a-sky>
-    <a-plane
-      position="0 0 -4"
-      rotation="-90 0 0"
-      width="30"
-      height="30"
-      color="#7f8c8d">
-    </a-plane>
+  <!-- 🌠 REAL GALAXY SKY -->
+  <a-sky
+    src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/sechelt.jpg"
+    rotation="0 -90 0">
+  </a-sky>
 
-    <!-- Walls -->
-    <a-box position="0 3 -12" width="30" height="6" depth="0.5" color="#636e72"></a-box>
-    <a-box position="-15 3 -4" width="0.5" height="6" depth="16" color="#636e72"></a-box>
-    <a-box position="15 3 -4" width="0.5" height="6" depth="16" color="#636e72"></a-box>
+  <!-- 🌊 WATER SHADER -->
+  <a-plane
+    position="0 0 -10"
+    rotation="-90 0 0"
+    width="100"
+    height="100"
+    material="
+      color: #0044ff;
+      metalness: 0.3;
+      roughness: 0.2;"
+    animation="
+      property: material.color;
+      dir: alternate;
+      dur: 2000;
+      loop: true;
+      to: #0011aa">
+  </a-plane>
 
-    <!-- Interviewer -->
-    <a-sphere position="0 2.1 -6" radius="0.45" color="#ffccaa"></a-sphere>
-    <a-cylinder position="0 1 -6" radius="0.4" height="1.6" color="#2d3436"></a-cylinder>
+  <!-- 💡 LIGHTS -->
+  <a-entity light="type: ambient; intensity: 0.4"></a-entity>
+  <a-entity light="type: point; color: #00ffff; intensity: 3" position="0 6 -5"></a-entity>
+  <a-entity light="type: point; color: #ff00ff; intensity: 2" position="5 4 -8"></a-entity>
 
-    <!-- Desk -->
-    <a-box position="0 0.8 -5" width="3.5" height="0.2" depth="1.6" color="#8B4513"></a-box>
+  <!-- 🌈 NEON CYBER CITY -->
+  <a-box position="-6 3 -12" width="2" height="6" depth="2"
+         material="emissive: #00ffff; emissiveIntensity: 2"></a-box>
+  <a-box position="-3 4 -14" width="3" height="8" depth="2"
+         material="emissive: #ff00ff; emissiveIntensity: 2"></a-box>
+  <a-box position="3 5 -13" width="2.5" height="10" depth="2"
+         material="emissive: #00ff88; emissiveIntensity: 2"></a-box>
+  <a-box position="6 3 -11" width="2" height="6" depth="2"
+         material="emissive: #ffaa00; emissiveIntensity: 2"></a-box>
 
-    <!-- Question -->
-    <a-text
-      id="questionText"
-      position="0 3.8 -4"
-      width="9"
-      align="center"
-      color="white">
-    </a-text>
+  <!-- 🤖 BOSS CHARACTER -->
+  <a-sphere id="boss"
+            position="0 3 -7"
+            radius="1.2"
+            material="color: #ff0033; emissive: #ff0033; emissiveIntensity: 1"
+            animation="property: position; dir: alternate; dur: 1500; loop: true; to: 0 4 -7"
+            click-explosion>
+  </a-sphere>
 
-    <!-- Progress -->
-    <a-text
-      id="progressText"
-      position="0 3.3 -4"
-      width="6"
-      align="center"
-      color="#81ecec">
-    </a-text>
+  <!-- ⚡ BOSS ENERGY AURA -->
+  <a-entity position="0 3 -7"
+    particle-system="
+      preset: dust;
+      particleCount: 3000;
+      size: 0.4;
+      color: #ff0033, #ffff00;
+      velocityValue: 0 1 0;">
+  </a-entity>
 
-    <!-- Spoken Answer -->
-    <a-text
-      id="answerText"
-      position="0 2.6 -4"
-      width="9"
-      align="center"
-      color="#00cec9">
-    </a-text>
+  <!-- 🎮 ENERGY BEAM ATTACK -->
+  <a-cylinder position="0 3 -6"
+              radius="0.15"
+              height="6"
+              rotation="90 0 0"
+              material="emissive: #ff0000; emissiveIntensity: 3"
+              animation="property: scale; dir: alternate; dur: 800; loop: true; to: 1 1 1.5">
+  </a-cylinder>
 
-    <!-- Feedback -->
-    <a-text
-      id="feedbackText"
-      position="0 2 -4"
-      width="9"
-      align="center"
-      color="#ffeaa7">
-    </a-text>
+  <!-- 🔥 FIRE ZONES -->
+  <a-entity position="-4 0 -6"
+    particle-system="
+      preset: fire;
+      particleCount: 4000;
+      size: 1.4;
+      color: #ff4400, #ffaa00;">
+  </a-entity>
 
-    <!-- Mic Button -->
-    <a-circle
-      position="0 1.2 -3"
-      radius="0.35"
-      color="#d63031"
-      onclick="startInterviewVoice()">
-    </a-circle>
+  <a-entity position="4 0 -6"
+    particle-system="
+      preset: fire;
+      particleCount: 4000;
+      size: 1.4;
+      color: #00aaff, #00ffff;">
+  </a-entity>
 
-    <a-text
-      position="0 0.7 -3"
-      value="Click Mic & Speak"
-      align="center"
-      color="white">
-    </a-text>
+  <!-- 🌀 PORTAL -->
+  <a-torus position="0 2 -12"
+           radius="2.5"
+           radius-tubular="0.25"
+           material="emissive: #7700ff; emissiveIntensity: 3"
+           animation="property: rotation; to: 0 360 0; dur: 3000; loop: true">
+  </a-torus>
 
-    <!-- Camera -->
-    <a-entity position="0 1.6 0">
-      <a-camera>
-        <a-cursor></a-cursor>
-      </a-camera>
-    </a-entity>
+  <!-- ✨ INTERACTIVE MAGIC ORBS -->
+  <a-sphere position="-2 2 -4" radius="0.3"
+            material="emissive: #00ffff"
+            click-explosion></a-sphere>
 
-  </a-scene>
+  <a-sphere position="2 2 -4" radius="0.3"
+            material="emissive: #ff00ff"
+            click-explosion></a-sphere>
+
+  <!-- 🎥 CAMERA -->
+  <a-entity position="0 1.6 5">
+    <a-camera>
+      <a-cursor color="#00ffff"></a-cursor>
+    </a-camera>
+  </a-entity>
+
+</a-scene>
 </body>
 </html>
